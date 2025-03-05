@@ -1,0 +1,25 @@
+### Створити нове замовлення
+POST http://localhost:5000/api/orders
+Content-Type: application/json
+
+{
+  "client": {
+    "name": "Тестовий Клієнт",
+    "phone": "+380501234567",
+    "email": "test@example.com"
+  },
+  "items": [
+    {
+      "description": "Пальто",
+      "service": "cleaning",
+      "material": "Вовна",
+      "color": "Чорний",
+      "price": 300
+    }
+  ],
+  "status": "new",
+  "totalAmount": 300,
+  "receivedDate": "2025-03-05",
+  "promisedDate": "2025-03-08",
+  "branch": "main"
+}

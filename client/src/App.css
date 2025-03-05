@@ -1,0 +1,42 @@
+.welcome-container {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.menu-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.menu-link {
+  display: inline-block;
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 24px;
+  margin: 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.menu-link:hover {
+  background-color: #43a047;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}

@@ -1,0 +1,23 @@
+.qr-code-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+}
+
+.order-number {
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+@media print {
+    .qr-code-container {
+        box-shadow: none;
+        break-inside: avoid;
+    }
+}

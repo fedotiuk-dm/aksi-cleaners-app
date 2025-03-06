@@ -1,5 +1,6 @@
 import React from 'react';
-import QRCode from 'react-qr-code';
+import OrderQRCode from '../QRCode/QRCode';
+import { getServiceName } from '../../utils/serviceUtils';
 import './InvoicePrint.css';
 
 const InvoicePrint = ({ order }) => {
@@ -8,23 +9,8 @@ const InvoicePrint = ({ order }) => {
     return <div>Немає даних для відображення квитанції</div>;
   }
 
-  // Проста функція для друку, яка використовує нативний функціонал браузера
-  const handlePrint = () => {
-    console.log('Починаємо друк за допомогою window.print()');
-    window.print();
-  };
-
   return (
       <div className="invoice-page">
-        {/* Кнопка для виклику функції друку */}
-        <button
-            onClick={handlePrint}
-            className="print-button"
-        >
-          Друкувати квитанцію
-        </button>
-
-        {/* Контейнер з вмістом для друку */}
         <div className="print-container">
           <div className="invoice-header">
             <div className="company-logo">
@@ -41,7 +27,7 @@ const InvoicePrint = ({ order }) => {
           <div className="invoice-title">
             <h1>КВИТАНЦІЯ #{order.orderNumber}</h1>
             <div className="qr-code">
-              <QRCode value={`AKSI-${order.orderNumber}`} size={80} />
+              <OrderQRCode orderNumber={order.orderNumber} size={80} />
             </div>
           </div>
 
@@ -128,17 +114,5 @@ const InvoicePrint = ({ order }) => {
       </div>
   );
 };
-
-// Допоміжна функція для перекладу кодів послуг
-function getServiceName(serviceCode) {
-  const services = {
-    cleaning: 'Хімчистка',
-    washing: 'Прання',
-    ironing: 'Прасування',
-    leather: 'Обробка шкіри',
-    dyeing: 'Фарбування',
-  };
-  return services[serviceCode] || serviceCode;
-}
 
 export default InvoicePrint;

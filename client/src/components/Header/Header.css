@@ -1,0 +1,66 @@
+.app-header {
+    background-color: #2563eb;
+    color: white;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.user-controls {
+    display: flex;
+    align-items: center;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    background-color: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+}
+
+.logout-button {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    color: #bfdbfe;
+}
+
+.icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.logout-text {
+    margin-left: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .logout-text {
+        display: none;
+    }
+}

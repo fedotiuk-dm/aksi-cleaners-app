@@ -2,10 +2,15 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import OrdersPage from './pages/OrdersPage';
+import NewOrderPage from './pages/NewOrderPage';
 import LoginPage from './pages/LoginPage';
 import InvoicePrint from './components/InvoicePrint/InvoicePrint';
+import Header from './components/Header/Header';
+import SideMenu from './components/SideMenu/SideMenu';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
+import PrintOrderPage from './pages/PrintOrderPage';
+import InvoicePage from './pages/InvoicePage'; // Переконайтеся, що цей компонент існує
 
 // Головна сторінка
 const Home = () => (
@@ -13,6 +18,9 @@ const Home = () => (
       <h2>Ласкаво просимо до системи управління хімчисткою "AKSI"</h2>
       <p>Виберіть розділ для роботи:</p>
       <div className="menu-links">
+        <a href="/orders/new" className="menu-link">
+          Нове замовлення
+        </a>
         <a href="/orders" className="menu-link">
           Управління замовленнями
         </a>
@@ -49,36 +57,42 @@ function App() {
   return (
       <AuthProvider>
         <Router>
-          <div className="App">
-            <header className="App-header">
-              <h1>AKSI - Система управління хімчисткою</h1>
-            </header>
-            <main>
-              <Routes>
-                <Route path="/login" element={<LoginPage />} />
+          <div className="app-container">
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              {/* Додаємо маршрути для сторінок друку, які мають бути без хедера і меню */}
+              <Route path="/print/:id" element={<PrintOrderPage />} />
+              <Route path="/invoice/:id" element={<InvoicePage />} />
 
-                <Route path="/" element={
-                  <PrivateRoute>
-                    <Home />
-                  </PrivateRoute>
-                } />
+              <Route path="*" element={
+                <PrivateRoute>
+                  <div className="app-layout">
+                    <Header />
+                    <div className="content-container">
+                      <SideMenu />
+                      <main className="main-content">
+                        <Routes>
+                          <Route path="/" element={<Home />} />
+                          <Route path="/orders" element={<OrdersPage />} />
+                          <Route path="/orders/new" element={<NewOrderPage />} />
+                          <Route path="/invoice" element={<InvoicePrint order={sampleOrder} />} />
 
-                <Route path="/orders" element={
-                  <PrivateRoute>
-                    <OrdersPage />
-                  </PrivateRoute>
-                } />
+                          {/* Заглушки для інших розділів */}
+                          <Route path="/clients" element={<div className="placeholder-page"><h2>Клієнти</h2><p>Цей розділ ще у розробці</p></div>} />
+                          <Route path="/analytics" element={<div className="placeholder-page"><h2>Аналітика</h2><p>Цей розділ ще у розробці</p></div>} />
+                          <Route path="/delivery" element={<div className="placeholder-page"><h2>Доставка</h2><p>Цей розділ ще у розробці</p></div>} />
+                          <Route path="/payments" element={<div className="placeholder-page"><h2>Оплати</h2><p>Цей розділ ще у розробці</p></div>} />
+                          <Route path="/schedule" element={<div className="placeholder-page"><h2>Розклад</h2><p>Цей розділ ще у розробці</p></div>} />
 
-                <Route path="/invoice" element={
-                  <PrivateRoute>
-                    <InvoicePrint order={sampleOrder} />
-                  </PrivateRoute>
-                } />
-
-                {/* Якщо маршрут не знайдено, перенаправляємо на головну сторінку */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
+                          {/* Якщо маршрут не знайдено, перенаправляємо на головну сторінку */}
+                          <Route path="*" element={<Navigate to="/" replace />} />
+                        </Routes>
+                      </main>
+                    </div>
+                  </div>
+                </PrivateRoute>
+              } />
+            </Routes>
           </div>
         </Router>
       </AuthProvider>

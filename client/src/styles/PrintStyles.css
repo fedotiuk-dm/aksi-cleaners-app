@@ -1,0 +1,72 @@
+@media print {
+    /* Глобальні налаштування для друку */
+    @page {
+        size: auto;
+        margin: 10mm;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        background-color: #FFF !important;
+    }
+
+    /* Приховуємо все, що не потрібно друкувати */
+    nav, header, footer, button, .print-button, .no-print {
+        display: none !important;
+    }
+
+    /* Показуємо тільки контент для друку */
+    .print-container, .print-page, .invoice-page {
+        display: block !important;
+        visibility: visible !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        margin: 0 !important;
+        padding: 10mm !important;
+        font-size: 12pt !important;
+        background-color: white !important;
+        color: black !important;
+        z-index: 9999 !important;
+    }
+
+    /* Переконуємося, що всі елементи відображаються */
+    .print-header, .print-info, .print-section, .print-qr-section, .invoice-header,
+    .invoice-details, .invoice-title, .invoice-items, .invoice-footer, .print-footer,
+    .items-table, .print-totals, .company-logo, .company-info, .detail-row, .qr-code,
+    .signature-block, .terms, .thank-you {
+        display: block !important;
+        visibility: visible !important;
+        overflow: visible !important;
+        page-break-inside: avoid !important;
+    }
+
+    /* Зображення та QR-код */
+    img, canvas, svg {
+        display: block !important;
+        max-width: 100% !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Таблиці */
+    table, thead, tbody, tr, th, td {
+        display: table !important;
+        display: table-row !important;
+        display: table-cell !important;
+        page-break-inside: avoid !important;
+        visibility: visible !important;
+    }
+
+    /* Виправляємо проблеми з контейнерами */
+    div {
+        page-break-inside: avoid;
+        overflow: visible !important;
+    }
+}

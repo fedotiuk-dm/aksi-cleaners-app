@@ -1,0 +1,65 @@
+.order-footer {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.total-amount {
+    font-weight: 500;
+    font-size: 1.125rem;
+}
+
+.amount-value {
+    color: #2563eb;
+}
+
+.expected-date {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.cancel-button {
+    background-color: #e5e7eb;
+    color: #374151;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.cancel-button:hover {
+    background-color: #d1d5db;
+}
+
+.save-button {
+    background-color: #2563eb;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Для десктопів */
+@media (min-width: 768px) {
+    .order-footer {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .action-buttons {
+        margin-top: 0;
+    }
+}

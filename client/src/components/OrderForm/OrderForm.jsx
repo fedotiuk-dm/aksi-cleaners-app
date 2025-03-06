@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './OrderForm.css';
+import OrderQRCode from '../QRCode/QRCode';
 
 const OrderForm = ({ onSubmit, initialData = null }) => {
   const [formData, setFormData] = useState({
@@ -121,6 +122,28 @@ const OrderForm = ({ onSubmit, initialData = null }) => {
   return (
     <div className="order-form-container">
       <h2>Нове замовлення</h2>
+      {/* Відображення QR-коду, якщо це редагування існуючого замовлення */}
+      {initialData && initialData.orderNumber && (
+          <div className="order-qrcode-section">
+            <OrderQRCode orderNumber={initialData.orderNumber} />
+            <div className="print-buttons">
+              <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => window.open(`/print/${initialData._id || initialData.id}`, '_blank')}
+              >
+                Друкувати замовлення
+              </button>
+              <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => window.open(`/invoice/${initialData._id || initialData.id}`, '_blank')}
+              >
+                Друкувати інвойс
+              </button>
+            </div>
+          </div>
+      )}
       <form onSubmit={handleSubmit}>
         {/* Дані клієнта */}
         <div className="form-section">

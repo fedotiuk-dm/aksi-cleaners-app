@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './OrderList.css';
+import OrderQRCode from '../QRCode/QRCode';
 
 const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
   const [filter, setFilter] = useState({
@@ -8,6 +9,34 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
     dateFrom: '',
     dateTo: ''
   });
+  // QR code
+  const [selectedOrderForQR, setSelectedOrderForQR] = useState(null);
+
+  const printQRCode = () => {
+    const printContent = document.getElementById('qr-code-for-print');
+    const windowUrl = 'about:blank';
+    const uniqueName = new Date().getTime();
+    const windowName = 'Print' + uniqueName;
+    const printWindow = window.open(windowUrl, windowName, 'left=200,top=200,width=500,height=500');
+
+    printWindow.document.write('<html><head><title>Друк QR-коду</title>');
+    printWindow.document.write('<style>body { font-family: Arial; text-align: center; }</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(printContent.innerHTML);
+    printWindow.document.write('</body></html>');
+
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+  };
+
+// Add this function inside the component
+  const handleShowQRCode = (order) => {
+    setSelectedOrderForQR(order);
+  };
 
   // Обробник зміни фільтрів
   const handleFilterChange = (e) => {
@@ -163,32 +192,53 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
                   </td>
                   <td className="actions-cell">
                     <button
-                      className="btn btn-icon"
-                      onClick={() => onViewOrder(order._id || order.id)}
-                      title="Переглянути"
+                        className="btn btn-icon"
+                        onClick={() => onViewOrder(order._id || order.id)}
+                        title="Переглянути"
                     >
                       👁️
                     </button>
                     <button
-                      className="btn btn-icon"
-                      onClick={() => onEditOrder(order._id || order.id)}
-                      title="Редагувати"
+                        className="btn btn-icon"
+                        onClick={() => onEditOrder(order._id || order.id)}
+                        title="Редагувати"
                     >
                       ✏️
                     </button>
+                    <button
+                        className="btn btn-icon"
+                        onClick={() => window.open(`/print/${order._id || order.id}`, '_blank')}
+                        title="Друкувати замовлення"
+                    >
+                      🖨️
+                    </button>
+                    <button
+                        className="btn btn-icon"
+                        onClick={() => window.open(`/invoice/${order._id || order.id}`, '_blank')}
+                        title="Друкувати інвойс"
+                    >
+                      📃
+                    </button>
                     {order.status !== 'delivered' && (
-                      <select
-                        className="status-select"
-                        value={order.status}
-                        onChange={(e) => onStatusChange(order._id || order.id, e.target.value)}
-                      >
-                        <option value="" disabled>Змінити статус</option>
-                        <option value="new">Прийнято</option>
-                        <option value="processing">В обробці</option>
-                        <option value="ready">Готово</option>
-                        <option value="delivered">Видано</option>
-                      </select>
+                        <select
+                            className="status-select"
+                            value={order.status}
+                            onChange={(e) => onStatusChange(order._id || order.id, e.target.value)}
+                        >
+                          <option value="" disabled>Змінити статус</option>
+                          <option value="new">Прийнято</option>
+                          <option value="processing">В обробці</option>
+                          <option value="ready">Готово</option>
+                          <option value="delivered">Видано</option>
+                        </select>
                     )}
+                    <button
+                        className="btn btn-icon"
+                        onClick={() => handleShowQRCode(order)}
+                        title="QR-код"
+                    >
+                      🔍
+                    </button>
                   </td>
                 </tr>
               ))
@@ -201,6 +251,24 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
             )}
           </tbody>
         </table>
+        {selectedOrderForQR && (
+            <div className="qr-code-modal">
+              <div className="qr-code-modal-content">
+                <h3>QR-код замовлення {selectedOrderForQR.orderNumber}</h3>
+                <div id="qr-code-for-print">
+                  <OrderQRCode orderNumber={selectedOrderForQR.orderNumber} size={200} />
+                </div>
+                <div className="qr-code-modal-buttons">
+                  <button className="btn btn-primary" onClick={printQRCode}>
+                    Друкувати
+                  </button>
+                  <button className="btn btn-secondary" onClick={() => setSelectedOrderForQR(null)}>
+                    Закрити
+                  </button>
+                </div>
+              </div>
+            </div>
+        )}
       </div>
     </div>
   );

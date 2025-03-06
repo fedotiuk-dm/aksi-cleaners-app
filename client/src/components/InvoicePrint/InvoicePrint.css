@@ -1,0 +1,172 @@
+/* Загальні стилі */
+.invoice-page {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.print-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.print-button:hover {
+  background-color: #45a049;
+}
+
+/* Контейнер для друку */
+.print-container {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: white;
+}
+
+/* Заголовок квитанції */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.company-logo img {
+  max-width: 150px;
+  height: auto;
+}
+
+.company-info {
+  text-align: right;
+}
+
+.company-info h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+/* Заголовок з QR-кодом */
+.invoice-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+}
+
+.invoice-title h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Деталі замовлення */
+.invoice-details {
+  margin-bottom: 20px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.label {
+  font-weight: bold;
+  width: 150px;
+}
+
+/* Таблиця товарів */
+.invoice-items {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.invoice-items th, .invoice-items td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.invoice-items th {
+  background-color: #f2f2f2;
+}
+
+.total-label {
+  text-align: right;
+  font-weight: bold;
+}
+
+.total-value {
+  font-weight: bold;
+}
+
+/* Підвал квитанції */
+.invoice-footer {
+  margin-top: 30px;
+  font-size: 14px;
+}
+
+.terms {
+  font-size: 12px;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.thank-you {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.signature-block {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.signature-line {
+  border-top: 1px solid #000;
+  padding-top: 5px;
+  width: 45%;
+}
+
+/* Стилі для друку */
+@media print {
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .print-button {
+    display: none !important;
+  }
+
+  .print-container {
+    border: none;
+    padding: 0;
+    width: 100%;
+  }
+
+  /* Забезпечуємо, що всі елементи видно при друку */
+  .invoice-header,
+  .invoice-title,
+  .invoice-details,
+  .invoice-items,
+  .invoice-footer {
+    page-break-inside: avoid;
+  }
+
+  /* Забезпечуємо, що зображення відображаються при друку */
+  img, .qr-code {
+    display: block !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

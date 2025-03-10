@@ -19,6 +19,8 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
     const windowName = 'Print' + uniqueName;
     const printWindow = window.open(windowUrl, windowName, 'left=200,top=200,width=500,height=500');
 
+    if (!printWindow || !printContent) return;
+
     printWindow.document.write('<html><head><title>Друк QR-коду</title>');
     printWindow.document.write('<style>body { font-family: Arial; text-align: center; }</style>');
     printWindow.document.write('</head><body>');
@@ -33,7 +35,7 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
     }, 250);
   };
 
-// Add this function inside the component
+  // Функція для показу QR коду
   const handleShowQRCode = (order) => {
     setSelectedOrderForQR(order);
   };
@@ -47,19 +49,58 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
     }));
   };
 
+  // Адаптація даних замовлень для компоненту
+  const adaptedOrders = Array.isArray(orders) ? orders : [];
+
+  // Функція для доступу до властивостей замовлення з врахуванням різних форматів API
+  const getOrderProperty = (order, englishKey, ukrainianKey) => {
+    // Спробуємо спочатку англійську назву, потім українську
+    return order[englishKey] !== undefined ? order[englishKey] : order[ukrainianKey];
+  };
+
+  // Функція для отримання клієнта
+  const getOrderClient = (order) => {
+    // Спробуємо дістати інформацію про клієнта в різних форматах
+    const client = order.client || order.клієнт || {};
+    return {
+      name: client.name || client.forname || 'Не вказано',
+      phone: client.phone || 'Не вказано'
+    };
+  };
+  
+  // Функція для отримання статусу в стандартизованому форматі
+  const getOrderStatus = (order) => {
+    const status = order.status || order.статус;
+    // Конвертуємо українські статуси в англійські
+    const statusMap = {
+      'нове': 'new',
+      'в обробці': 'processing',
+      'готове': 'ready',
+      'видане': 'delivered',
+      'скасоване': 'cancelled'
+    };
+    return statusMap[status] || status || 'new';
+  };
+
   // Функція для фільтрації замовлень
-  const filteredOrders = orders.filter(order => {
+  const filteredOrders = adaptedOrders.filter(order => {
+    // Дістаємо властивості замовлення в стандартизованому форматі
+    const orderStatus = getOrderStatus(order);
+    const client = getOrderClient(order);
+    const orderNumber = getOrderProperty(order, 'orderNumber', 'номер_замовлення') || '';
+    const receivedDate = getOrderProperty(order, 'receivedDate', 'дата_створення') || new Date();
+    
     // Фільтр за статусом
-    if (filter.status !== 'all' && order.status !== filter.status) {
+    if (filter.status !== 'all' && orderStatus !== filter.status) {
       return false;
     }
 
     // Фільтр за текстом (номер, ім'я клієнта, телефон)
     if (filter.searchText) {
       const searchLower = filter.searchText.toLowerCase();
-      const orderNumberMatch = order.orderNumber?.toLowerCase().includes(searchLower);
-      const clientNameMatch = order.client?.name?.toLowerCase().includes(searchLower);
-      const clientPhoneMatch = order.client?.phone?.toLowerCase().includes(searchLower);
+      const orderNumberMatch = orderNumber.toLowerCase().includes(searchLower);
+      const clientNameMatch = client.name.toLowerCase().includes(searchLower);
+      const clientPhoneMatch = client.phone.toLowerCase().includes(searchLower);
 
       if (!orderNumberMatch && !clientNameMatch && !clientPhoneMatch) {
         return false;
@@ -67,12 +108,12 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
     }
 
     // Фільтр за датою "від"
-    if (filter.dateFrom && new Date(order.receivedDate) < new Date(filter.dateFrom)) {
+    if (filter.dateFrom && new Date(receivedDate) < new Date(filter.dateFrom)) {
       return false;
     }
 
     // Фільтр за датою "до"
-    if (filter.dateTo && new Date(order.receivedDate) > new Date(filter.dateTo)) {
+    if (filter.dateTo && new Date(receivedDate) > new Date(filter.dateTo)) {
       return false;
     }
 
@@ -83,9 +124,15 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
   const getStatusLabel = (status) => {
     const statusMap = {
       new: 'Прийнято',
+      nове: 'Прийнято',
       processing: 'В обробці',
+      'в обробці': 'В обробці',
       ready: 'Готово',
-      delivered: 'Видано'
+      готове: 'Готово',
+      delivered: 'Видано',
+      видане: 'Видано',
+      cancelled: 'Скасовано',
+      скасоване: 'Скасовано'
     };
     return statusMap[status] || status;
   };
@@ -94,9 +141,15 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
   const getStatusClass = (status) => {
     const classMap = {
       new: 'status-new',
+      nове: 'status-new',
       processing: 'status-processing',
+      'в обробці': 'status-processing',
       ready: 'status-ready',
-      delivered: 'status-delivered'
+      готове: 'status-ready',
+      delivered: 'status-delivered',
+      видане: 'status-delivered',
+      cancelled: 'status-cancelled',
+      скасоване: 'status-cancelled'
     };
     return `status-badge ${classMap[status] || ''}`;
   };
@@ -177,53 +230,63 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
           </thead>
           <tbody>
             {filteredOrders.length > 0 ? (
-              filteredOrders.map(order => (
-                <tr key={order._id || order.id}>
-                  <td>{order.orderNumber}</td>
-                  <td>{order.client.name}</td>
-                  <td>{order.client.phone}</td>
-                  <td>{new Date(order.receivedDate).toLocaleDateString()}</td>
-                  <td>{new Date(order.promisedDate).toLocaleDateString()}</td>
-                  <td>{order.totalAmount} грн</td>
-                  <td>
-                    <span className={getStatusClass(order.status)}>
-                      {getStatusLabel(order.status)}
-                    </span>
-                  </td>
-                  <td className="actions-cell">
-                    <button
+              filteredOrders.map(order => {
+                // Дістаємо всі необхідні властивості замовлення
+                const id = order._id || order.id;
+                const orderNumber = getOrderProperty(order, 'orderNumber', 'номер_замовлення') || '';
+                const client = getOrderClient(order);
+                const receivedDate = getOrderProperty(order, 'receivedDate', 'дата_створення') || new Date();
+                const promisedDate = getOrderProperty(order, 'promisedDate', 'дата_виконання') || receivedDate;
+                const totalAmount = getOrderProperty(order, 'totalAmount', 'сума_до_сплати') || 0;
+                const status = getOrderStatus(order);
+                
+                return (
+                  <tr key={id}>
+                    <td>{orderNumber}</td>
+                    <td>{client.name}</td>
+                    <td>{client.phone}</td>
+                    <td>{new Date(receivedDate).toLocaleDateString()}</td>
+                    <td>{new Date(promisedDate).toLocaleDateString()}</td>
+                    <td>{totalAmount} грн</td>
+                    <td>
+                      <span className={getStatusClass(status)}>
+                        {getStatusLabel(status)}
+                      </span>
+                    </td>
+                    <td className="actions-cell">
+                      <button
                         className="btn btn-icon"
-                        onClick={() => onViewOrder(order._id || order.id)}
+                        onClick={() => onViewOrder(id)}
                         title="Переглянути"
-                    >
-                      👁️
-                    </button>
-                    <button
+                      >
+                        👁️
+                      </button>
+                      <button
                         className="btn btn-icon"
-                        onClick={() => onEditOrder(order._id || order.id)}
+                        onClick={() => onEditOrder(id)}
                         title="Редагувати"
-                    >
-                      ✏️
-                    </button>
-                    <button
+                      >
+                        ✏️
+                      </button>
+                      <button
                         className="btn btn-icon"
-                        onClick={() => window.open(`/print/${order._id || order.id}`, '_blank')}
+                        onClick={() => window.open(`/print/${id}`, '_blank')}
                         title="Друкувати замовлення"
-                    >
-                      🖨️
-                    </button>
-                    <button
+                      >
+                        🖨️
+                      </button>
+                      <button
                         className="btn btn-icon"
-                        onClick={() => window.open(`/invoice/${order._id || order.id}`, '_blank')}
+                        onClick={() => window.open(`/invoice/${id}`, '_blank')}
                         title="Друкувати інвойс"
-                    >
-                      📃
-                    </button>
-                    {order.status !== 'delivered' && (
+                      >
+                        📃
+                      </button>
+                      {status !== 'delivered' && status !== 'видане' && (
                         <select
-                            className="status-select"
-                            value={order.status}
-                            onChange={(e) => onStatusChange(order._id || order.id, e.target.value)}
+                          className="status-select"
+                          value={status}
+                          onChange={(e) => onStatusChange(id, e.target.value)}
                         >
                           <option value="" disabled>Змінити статус</option>
                           <option value="new">Прийнято</option>
@@ -231,17 +294,18 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
                           <option value="ready">Готово</option>
                           <option value="delivered">Видано</option>
                         </select>
-                    )}
-                    <button
+                      )}
+                      <button
                         className="btn btn-icon"
                         onClick={() => handleShowQRCode(order)}
                         title="QR-код"
-                    >
-                      🔍
-                    </button>
-                  </td>
-                </tr>
-              ))
+                      >
+                        🔍
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td colSpan="8" className="no-orders">
@@ -252,22 +316,22 @@ const OrderList = ({ orders, onStatusChange, onViewOrder, onEditOrder }) => {
           </tbody>
         </table>
         {selectedOrderForQR && (
-            <div className="qr-code-modal">
-              <div className="qr-code-modal-content">
-                <h3>QR-код замовлення {selectedOrderForQR.orderNumber}</h3>
-                <div id="qr-code-for-print">
-                  <OrderQRCode orderNumber={selectedOrderForQR.orderNumber} size={200} />
-                </div>
-                <div className="qr-code-modal-buttons">
-                  <button className="btn btn-primary" onClick={printQRCode}>
-                    Друкувати
-                  </button>
-                  <button className="btn btn-secondary" onClick={() => setSelectedOrderForQR(null)}>
-                    Закрити
-                  </button>
-                </div>
+          <div className="qr-code-modal">
+            <div className="qr-code-modal-content">
+              <h3>QR-код замовлення {getOrderProperty(selectedOrderForQR, 'orderNumber', 'номер_замовлення')}</h3>
+              <div id="qr-code-for-print">
+                <OrderQRCode orderNumber={getOrderProperty(selectedOrderForQR, 'orderNumber', 'номер_замовлення')} size={200} />
+              </div>
+              <div className="qr-code-modal-buttons">
+                <button className="btn btn-primary" onClick={printQRCode}>
+                  Друкувати
+                </button>
+                <button className="btn btn-secondary" onClick={() => setSelectedOrderForQR(null)}>
+                  Закрити
+                </button>
               </div>
             </div>
+          </div>
         )}
       </div>
     </div>

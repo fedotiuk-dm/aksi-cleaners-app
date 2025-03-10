@@ -10,7 +10,12 @@ import SideMenu from './components/SideMenu/SideMenu';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 import PrintOrderPage from './pages/PrintOrderPage';
-import InvoicePage from './pages/InvoicePage'; // Переконайтеся, що цей компонент існує
+import InvoicePage from './pages/InvoicePage';
+
+// Імпорт компонентів клієнтів
+import ClientsPage from './pages/ClientsPage';
+import NewClientPage from './pages/NewClientPage';
+import ClientDetailsPage from './pages/ClientDetailsPage';
 
 // Головна сторінка
 const Home = () => (
@@ -23,6 +28,9 @@ const Home = () => (
         </a>
         <a href="/orders" className="menu-link">
           Управління замовленнями
+        </a>
+        <a href="/clients" className="menu-link">
+          Клієнти
         </a>
         <a href="/invoice" className="menu-link">
           Інвойси
@@ -77,8 +85,12 @@ function App() {
                           <Route path="/orders/new" element={<NewOrderPage />} />
                           <Route path="/invoice" element={<InvoicePrint order={sampleOrder} />} />
 
+                          {/* Маршрути для клієнтів (замінюємо заглушку) */}
+                          <Route path="/clients" element={<ClientsPage />} />
+                          <Route path="/clients/new" element={<NewClientPage />} />
+                          <Route path="/clients/:clientId" element={<ClientDetailsPage />} />
+
                           {/* Заглушки для інших розділів */}
-                          <Route path="/clients" element={<div className="placeholder-page"><h2>Клієнти</h2><p>Цей розділ ще у розробці</p></div>} />
                           <Route path="/analytics" element={<div className="placeholder-page"><h2>Аналітика</h2><p>Цей розділ ще у розробці</p></div>} />
                           <Route path="/delivery" element={<div className="placeholder-page"><h2>Доставка</h2><p>Цей розділ ще у розробці</p></div>} />
                           <Route path="/payments" element={<div className="placeholder-page"><h2>Оплати</h2><p>Цей розділ ще у розробці</p></div>} />

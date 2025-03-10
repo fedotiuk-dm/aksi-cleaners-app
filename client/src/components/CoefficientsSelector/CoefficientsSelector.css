@@ -1,0 +1,70 @@
+/* client/src/components/CoefficientsSelector/CoefficientsSelector.css */
+.coefficients-selector {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.coefficients-section,
+.additional-services-section {
+    margin-bottom: 20px;
+}
+
+.coefficients-selector h4 {
+    margin-top: 0;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.coefficients-list,
+.services-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.coefficient-item,
+.service-item {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.coefficient-item:hover,
+.service-item:hover {
+    border-color: #3498db;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.coefficient-item.selected,
+.service-item.selected {
+    background-color: #e1f0fa;
+    border-color: #3498db;
+}
+
+.coefficient-name,
+.service-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.coefficient-value,
+.service-price {
+    font-weight: 600;
+    color: #2980b9;
+}
+
+.loading {
+    padding: 15px;
+    text-align: center;
+    color: #7f8c8d;
+}

@@ -2,5 +2,14 @@
   "dependencies": {
     "qrcode.react": "^4.2.0",
     "react-qr-code": "^2.0.15"
+    "@emotion/react": "^11.x.x",
+    "@emotion/styled": "^11.x.x",
+    "@fontsource/roboto": "^x.x.x",
+    "@mui/icons-material": "^5.x.x",
+    "@mui/material": "^5.x.x",
+    "name": "client",
+    "version": "0.1.0",
+    "private": true,
+    "proxy": "http://localhost:5000",
   }
 }

@@ -81,6 +81,31 @@ const OrdersPage = () => {
     handleEditOrder(orderId);
   };
 
+  // /client/src/pages/OrdersPage.jsx
+useEffect(() => {
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      console.log('Запит на отримання замовлень...');
+      
+      const response = await axios.get('/api/orders');
+      
+      console.log('Відповідь API замовлень:', response.data);
+      console.log('Кількість отриманих замовлень:', response.data.length);
+      
+      setOrders(response.data);
+    } catch (error) {
+      console.error('Помилка отримання замовлень:', error);
+      console.error('Деталі помилки:', error.response?.data);
+      setError('Не вдалося завантажити замовлення');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  fetchOrders();
+}, []);
+
   return (
     <div className="orders-page">
       <div className="page-header">
